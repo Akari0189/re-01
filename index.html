@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网易云轮播图</title>
+    
+</head>
+<body>
+    
+    <div class="carousel ">
+        <!-- 图片 -->
+        <div class="carousel_img">          
+            <img class="centerImg" src="images/1.jpg">
+            <img class="rightImg" src="images/2.jpg">
+            <img class="leftImg" src="images/3.jpg">
+            
+        </div>
+        <!-- 图片下面的悬浮点 -->
+        <ul class="carousel_dot">
+            <li class="dotSty"></li>
+            <li></li>
+            <li></li>
+
+        </ul>
+        <!-- 左右两边的箭头 -->
+        <box class="carousel_arrows">
+            <img src="images/jiantouzuo.jpg">
+            <img src="images/jiantouyou.jpg">
+        </box>
+    </div>
+     
+    <style>
+        /* 清除默认样式 */
+        * {
+            padding: 0;
+            margin: 0;
+            font-size: 0;
+        }
+ 
+        /* 给轮播图盒子设置样式 */
+        .carousel {
+            margin: 310px auto;
+            top: -10px;
+            left: -340px;
+            width: 495px;
+            height: 269;
+            position: relative;
+        }
+ 
+        /* 给图片的盒子设置样式 */
+        .carousel_img {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+ 
+        /* 给图片设置样式 */
+        .carousel_img img {
+            max-width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 0px;
+            /* 设置圆角 */
+            transition: 1s;
+            /* 给图片设置过渡效果 */
+            transform: scale(0.7);
+            /* 给图片设置缩小百分之七十 */
+            z-index: 500;
+            /* 给图片设置层级 */
+        }
+ 
+        /* 给左中右三个图片分别设置样式
+        这里因为类样式权重不够，所以加上了!important*/
+       
+            
+        
+ 
+        .centerImg {
+            transform: scale(1) !important;
+            z-index: 900 !important;
+            left: 0 !important;
+        }
+
+        .carousel_dot {
+            width: 30%;
+            height: 20px;
+            position: absolute;
+            bottom: -310px;
+            /* 这里是给悬浮点的父盒子设置水平居中 */
+            left: 80%;
+            transform: translateX(-50%);
+            /* 给悬浮点的父盒子设置弹性布局,让悬浮点均匀排列 */
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            transition: 2s;
+            
+        }
+ 
+        /* 给悬浮点设置样式 */
+        .carousel_dot li {
+            
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            opacity: 0.5;
+            background-color: #04060a;
+            transition: 0.3s;
+        }
+ 
+        /* 给悬浮点加个伪类,鼠标移动上去有个变化的效果 */
+        .carousel_dot li:hover {
+            opacity: 1;
+            background-color: #3399ff;
+        }
+ 
+        /* 给当前图片所对应的悬浮点添加样式 */
+        .dotSty {
+            opacity: 1 !important;
+            background-color: #3399ff !important;
+        }
+ 
+        /* 给左右箭头的父盒子添加样式 */
+        .carousel_arrows {
+            width: 110%;
+            height: 50%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            top: 132px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 910;
+            transition: 3s;
+            /* opacity: 0; */
+        }
+ 
+        /* 给左右箭头图片设置样式 */
+        .carousel_arrows img {
+            width: 20px;
+            height: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: #3399ff;
+        }
+        /* 进入以下元素,改变光标样式 */
+        .carousel_arrows img:hover,
+        .carousel_dot li:hover,
+        .carousel {
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        //网易云轮播图，position，z-index，transform组合实现轮播图
+        const carousel = document.querySelector('.carousel') // 轮播图盒子
+        const arrowsArr = document.querySelectorAll('.carousel_arrows img') // 箭头图片数组
+        const dots = document.querySelectorAll('.carousel_dot li')  // 悬浮点元素数组
+        const carouselArrows = document.querySelector('.carousel_arrows') // 左右箭头父元素
+        const imageArr = document.querySelectorAll('.carousel_img img') // 轮播图片数组
+        let timer   // 定时器
+        let site = 0 // 图片实时位置  
+        
+        // 首先让图片自动轮播，设置一个定时器，每隔一段时间，修改左中右图片的class
+        function setup() {
+            timer = setInterval(() => {
+                // 切换到下一张图片
+                site++
+                run(site)
+            }, 2000);
+        }
+ 
+        function run(index) {
+            // 纠正实时监控图片位置的stie
+            if (index < 0) {
+                // 当index小于0的时候,site应该为最后一张图片的索引
+                site = dots.length - 1
+                index = dots.length - 1
+            }
+            if (index === dots.length) {
+                // 当index等于悬浮点数组长度时,stie应该为第一张图片的索引
+                site = 0
+                index = 0
+            }
+            // 切换悬浮点样式
+            const dotSty = document.querySelector('.dotSty') // 找到当前有样式的悬浮点
+            dotSty.className = ''   // 清除样式
+            dots[index].className = 'dotSty' // 给下一个悬浮点添加样式
+ 
+            // 改变图片样式,达到轮播效果
+            // 获取当前有左中右样式的图片
+            const leftImg = document.querySelector('.leftImg')
+            const centerImg = document.querySelector('.centerImg')
+            const rightImg = document.querySelector('.rightImg')
+            // 清除样式
+            leftImg.className = ''
+            centerImg.className = ''
+            rightImg.className = ''
+            // 把左中右的样式给下一组图片
+            // 把centerImg的样式赋给下一张图片，index为下一张图片索引
+            imageArr[index].className = 'centerImg'
+            // []里的三元运算符判断的是，当前显示的图片上一张图片的索引或者下一张图片的索引
+            // 是否超过了最大值（图片数组长度减一）或者最小值（0）
+            imageArr[index - 1 < 0 ? imageArr.length - 1 : index - 1].className = 'leftImg' 
+            imageArr[index + 1 >= imageArr.length ? 0 : index + 1].className = 'rightImg'
+            // 做到这里，就能自动切换轮播图了
+            // 接下来我们添加一些互动效果，这才是js的魅力
+        }
+ 
+        // 给轮播图盒子添加鼠标移入和移除事件
+        // 使得轮播图有暂停效果，和左右箭头有显示隐藏效果
+        carousel.onmouseenter = () => {
+            clearInterval(timer)
+            carouselArrows.style.opacity = 0.7
+        }
+        carousel.onmouseleave = () => {
+            setup()
+            carouselArrows.style.opacity = 0
+        }
+ 
+        // 给箭头添加点击事件，左右切换轮播图
+        for (let i = 0; i < arrowsArr.length; i++) {
+            arrowsArr[i].onclick = () => {
+                if (i === 0) {
+                    site--
+                    run(site)
+                } else {
+                    site++
+                    run(site)
+                }
+            }
+        }
+        
+        // 给悬浮点添加鼠标移入事件，切换图片，这里记得清除定时器
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].onmouseenter = () => {
+                clearInterval(timer)
+                run(i)
+                site = i
+            }
+        }
+        // 切换到其他浏览器窗口时，停止轮播图，回来时继续轮播
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(timer)
+            } else {
+                setup()
+            }
+        })
+        setup()
+    </script>
+</body>
+</html>
